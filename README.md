@@ -1,4 +1,4 @@
-# Hi, I'm Asmita Regmi: Aspiring Data Analyst 
+# Hi, I'm Asmita Regmi
 
 I am an aspiring Data Analyst with experience in developing dashboards and translating business requirements into scalable analytics solutions . I am currently a graduate student at Wichita State University with hands-on experience in various data analytics and visualization tools such as SQL, Power BI, Excel, Tableau, AWS cloud environments and many more. I am passionate about transforming data into meaningful insights that supports in data-driven decision-making.
 
