@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Asmita Regmi — Business Analytics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0f0d;
+      --bg2: #101a14;
+      --card: #131f17;
+      --border: rgba(52,211,153,0.15);
+      --accent: #34d399;
+      --accent2: #fbbf24;
+      --text: #e2ede8;
+      --muted: #9ab8ad;
+      --tag-bg: rgba(52,211,153,0.1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE TEXTURE ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.4;
+    }
+
+    /* ── GRID BG ── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(52,211,153,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(52,211,153,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 4rem;
+      background: rgba(10,15,13,0.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      transition: all 0.3s;
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      color: var(--accent);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+    }
+
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* ── HAMBURGER ── */
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; z-index: 200; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--text); border-radius: 2px; transition: 0.3s; }
+
+    /* ── SECTIONS ── */
+    section {
+      position: relative;
+      z-index: 1;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 5rem 2rem;
+    }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      max-width: 1000px;
+      padding-top: 7rem;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      font-size: 0.78rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 0.3rem 0.9rem;
+      border-radius: 2rem;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.2s forwards;
+    }
+
+    h1.hero-name {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 8vw, 6rem);
+      font-weight: 700;
+      line-height: 1.05;
+      margin-bottom: 0.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.35s forwards;
+    }
+
+    h1.hero-name em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2.5vw, 1.3rem);
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      max-width: 580px;
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.5s forwards;
+    }
+
+    .hero-summary {
+      font-size: 1rem;
+      color: #ccdfd8;
+      max-width: 620px;
+      margin-bottom: 2.5rem;
+      line-height: 1.8;
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.65s forwards;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.8s forwards;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      padding: 0.75rem 1.8rem;
+      background: var(--accent);
+      color: var(--bg);
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 0.03em;
+      transition: all 0.25s;
+    }
+    .btn-primary:hover { background: #6ee7b7; transform: translateY(-2px); }
+
+    .btn-outline {
+      display: inline-block;
+      padding: 0.75rem 1.8rem;
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      letter-spacing: 0.03em;
+      transition: all 0.25s;
+    }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+
+    .hero-stats {
+      display: flex;
+      gap: 3rem;
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.95s forwards;
+      flex-wrap: wrap;
+    }
+
+    .stat-item { text-align: left; }
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      color: var(--accent);
+      font-weight: 700;
+      line-height: 1;
+    }
+    .stat-label { font-size: 0.8rem; color: var(--muted); margin-top: 0.25rem; text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* ── SECTION HEADERS ── */
+    .section-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    h2.section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 3rem;
+    }
+
+    h2.section-title em { font-style: italic; color: var(--accent); }
+
+    /* ── SKILLS ── */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.2rem;
+    }
+
+    .skill-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      transition: all 0.25s;
+    }
+    .skill-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+
+    .skill-icon { font-size: 1.6rem; margin-bottom: 0.75rem; }
+    .skill-title { font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 0.5rem; }
+    .skill-list { font-size: 0.88rem; color: var(--muted); line-height: 1.9; }
+
+    /* ── EXPERIENCE ── */
+    .timeline { position: relative; }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0; bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+    }
+
+    .timeline-item {
+      padding-left: 2.5rem;
+      padding-bottom: 3rem;
+      position: relative;
+      opacity: 1;
+      transform: translateY(0);
+      transition: all 0.5s ease;
+    }
+    .timeline-item.visible { opacity: 1; transform: translateY(0); }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -4px;
+      top: 0.4rem;
+      width: 9px;
+      height: 9px;
+      background: var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 12px var(--accent);
+    }
+
+    .tl-date {
+      font-size: 0.78rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.3rem;
+    }
+    .tl-role { font-size: 1.15rem; font-weight: 600; margin-bottom: 0.15rem; }
+    .tl-company { font-size: 0.92rem; color: var(--muted); margin-bottom: 0.9rem; }
+    .tl-bullets { list-style: none; }
+    .tl-bullets li {
+      font-size: 0.92rem;
+      color: #ffffff;
+      padding-left: 1.1rem;
+      position: relative;
+      margin-bottom: 0.4rem;
+      line-height: 1.6;
+    }
+    .tl-bullets li::before { content: '→'; position: absolute; left: 0; color: var(--accent); }
+
+    /* ── PROJECTS ── */
+    .projects-grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .project-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s;
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .project-card.visible { opacity: 1; transform: translateY(0); }
+    .project-card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+
+    .project-header {
+      padding: 1.5rem 1.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .project-header-left { display: flex; align-items: center; gap: 1rem; }
+    .project-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.85rem;
+      color: var(--accent);
+      opacity: 0.6;
+      min-width: 24px;
+    }
+    .project-name { font-size: 1.1rem; font-weight: 600; }
+    .project-tools { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+    .tag {
+      display: inline-block;
+      padding: 0.2rem 0.7rem;
+      background: var(--tag-bg);
+      color: var(--accent);
+      border-radius: 2rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      border: 1px solid rgba(52,211,153,0.2);
+    }
+
+    .tag.purple {
+      background: rgba(183,148,244,0.1);
+      color: var(--accent2);
+      border-color: rgba(183,148,244,0.2);
+    }
+
+    .chevron {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: var(--muted);
+      stroke-width: 2;
+      transition: transform 0.3s, stroke 0.2s;
+      flex-shrink: 0;
+    }
+    .project-card.open .chevron { transform: rotate(180deg); stroke: var(--accent); }
+
+    .project-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+    .project-body-inner {
+      padding: 0 1.8rem 1.8rem;
+      border-top: 1px solid var(--border);
+      padding-top: 1.2rem;
+    }
+
+    .project-desc { font-size: 0.93rem; color: #ffffff; margin-bottom: 1rem; line-height: 1.8; }
+    .project-points { list-style: none; }
+    .project-points li {
+      font-size: 0.9rem;
+      color: #ffffff;
+      padding-left: 1.1rem;
+      position: relative;
+      margin-bottom: 0.5rem;
+      line-height: 1.6;
+    }
+    .project-points li::before { content: '▸'; position: absolute; left: 0; color: var(--accent); }
+
+    .project-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 1rem;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition: gap 0.2s;
+    }
+    .project-link:hover { gap: 0.7rem; }
+
+    /* ── EDUCATION ── */
+    .edu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.2rem;
+    }
+
+    .edu-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.6rem;
+      transition: all 0.25s;
+    }
+    .edu-card:hover { border-color: var(--accent2); transform: translateY(-3px); }
+    .edu-degree { font-weight: 600; font-size: 1rem; margin-bottom: 0.3rem; }
+    .edu-school { color: var(--accent); font-size: 0.9rem; margin-bottom: 0.25rem; }
+    .edu-date { color: var(--muted); font-size: 0.82rem; margin-bottom: 0.9rem; }
+    .edu-courses { font-size: 0.83rem; color: #718096; line-height: 1.7; }
+
+    /* ── CERTIFICATIONS ── */
+    .cert-list {
+      display: grid;
+      gap: 0.8rem;
+    }
+
+    .cert-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.4rem;
+      transition: all 0.2s;
+    }
+    .cert-item:hover { border-color: var(--accent); }
+    .cert-icon { font-size: 1.3rem; flex-shrink: 0; }
+    .cert-name { font-size: 0.95rem; font-weight: 500; }
+    .cert-org { font-size: 0.8rem; color: var(--muted); }
+    .cert-link {
+      display: inline-block;
+      padding: 0.3rem 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 500;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .cert-link:hover { border-color: var(--accent); background: var(--tag-bg); }
+
+    /* ── CONTACT ── */
+    #contact { text-align: center; }
+    .contact-desc { color: var(--muted); max-width: 520px; margin: 0 auto 2.5rem; font-size: 1rem; }
+
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1.2rem;
+      margin-top: 2rem;
+    }
+
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.8rem 1.5rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: all 0.25s;
+    }
+    .contact-link:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+    .contact-link svg { width: 18px; height: 18px; fill: currentColor; }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: var(--muted);
+      font-size: 0.82rem;
+      border-top: 1px solid var(--border);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── OTHER PROJECTS ── */
+    .other-projects {
+      margin-top: 1.5rem;
+      background: var(--card);
+      border: 1px dashed rgba(52,211,153,0.25);
+      border-radius: 10px;
+      padding: 1.8rem 2rem;
+    }
+    .other-projects-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .other-title { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.25rem; }
+    .other-sub { font-size: 0.88rem; color: var(--muted); }
+
+    /* ── DIVIDER ── */
+    .section-divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--border), transparent);
+      margin: 0 auto;
+      max-width: 1000px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── AVAILABLE BADGE ── */
+    .available-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.78rem;
+      color: #68d391;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.05s forwards;
+    }
+    .available-dot {
+      width: 7px; height: 7px;
+      background: #68d391;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(104,211,145,0.4); }
+      50% { box-shadow: 0 0 0 6px rgba(104,211,145,0); }
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; flex-direction: column; gap: 1rem; position: fixed; top: 0; right: 0; bottom: 0; width: 220px; background: var(--bg2); padding: 5rem 2rem 2rem; border-left: 1px solid var(--border); }
+      .nav-links.open { display: flex; }
+      .hamburger { display: flex; }
+      section { padding: 4rem 1.5rem; }
+      .hero-stats { gap: 2rem; }
+      .contact-links { flex-direction: column; align-items: center; }
+    }
+  
+    /* ── CERT MODAL ── */
+    .cert-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .cert-modal-overlay.open { display: flex; }
+    .cert-modal-box {
+      position: relative;
+      max-width: 860px;
+      width: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+    }
+    .cert-modal-box img {
+      width: 100%;
+      display: block;
+    }
+    .cert-modal-close {
+      position: absolute;
+      top: 0.8rem;
+      right: 0.8rem;
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .cert-modal-close:hover { background: rgba(255,255,255,0.2); }
+
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav id="navbar">
+  <a class="nav-logo" href="#">Asmita Regmi</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <h1 class="hero-name">Asmita <em>Regmi</em></h1>
+  <p class="hero-sub">Graduate Student @ Wichita State University · United States · Open to Relocate</p>
+  <p class="hero-summary">
+    Business Analytics graduate student experienced in dashboard development, KPI reporting,
+    ETL pipelines, and data analysis — transforming complex datasets into interactive
+    visualizations that drive decision-making.
+  </p>
+  <div class="hero-ctas">
+    <a href="#projects" class="btn-primary">View Projects →</a>
+    <a href="https://github.com/ashuu-05" target="_blank" class="btn-outline">GitHub ↗</a>
+    <a href="https://www.linkedin.com/in/asmita-regmi57/" target="_blank" class="btn-outline">LinkedIn ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-num">10+</div>
+      <div class="stat-label">Projects Completed</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">5+</div>
+      <div class="stat-label">Cloud & BI Tools</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">25%</div>
+      <div class="stat-label">Data Accuracy Improved</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">4</div>
+      <div class="stat-label">Certifications</div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ── SKILLS ── -->
+<section id="skills">
+  <p class="section-label">Toolkit</p>
+  <h2 class="section-title">Tools &amp; <em>Expertise</em></h2>
+  <div class="skills-grid">
+    <div class="skill-card">
+      <div class="skill-icon">🐍</div>
+      <div class="skill-title">Programming & Databases</div>
+      <div class="skill-list">Python · SQL (Joins, Subqueries) · PostgreSQL · Google BigQuery</div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">📊</div>
+      <div class="skill-title">Data Analysis & Visualization</div>
+      <div class="skill-list">Power BI (DAX, Power Query) · Tableau · Excel (Pivot Tables, XLOOKUP, VBA, Macros) · KPI Reporting · EDA · Statistical Analysis</div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">☁️</div>
+      <div class="skill-title">Data Engineering & Cloud</div>
+      <div class="skill-list">ETL/ELT Pipelines · Data Cleaning · Data Modeling · Data Warehousing · API Integration · RAG Pipelines · AWS (S3, Lambda, Glue, Athena, CloudWatch, SNS) · Microsoft Azure</div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">🛠️</div>
+      <div class="skill-title">Tools & Platforms</div>
+      <div class="skill-list">MS Office Suite · Google Suite · VS Code · Google Colab · Alteryx · Zoho CRM</div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">🤝</div>
+      <div class="skill-title">Soft Skills</div>
+      <div class="skill-list">Problem-Solving · Attention to Detail · Cross-functional Collaboration · Analytical & Critical Thinking</div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ── EXPERIENCE ── -->
+<section id="experience">
+  <p class="section-label">Work History</p>
+  <h2 class="section-title">Professional <em>Experience</em></h2>
+  <div class="timeline">
+
+    <div class="timeline-item">
+      <div class="tl-date">Feb 2025 — Present</div>
+      <div class="tl-role">Graduate Assistant</div>
+      <div class="tl-company">Wichita State University · Wichita, KS</div>
+      <ul class="tl-bullets">
+        <li>Pulled and analyzed student enrollment data using Excel to support reporting and data-driven decision-making.</li>
+        <li>Handled 100+ emails per week, ensuring timely communication and smooth coordination across stakeholders.</li>
+        <li>Maintained and updated student databases in MS Access, improving data accuracy by 25% and reducing time on administrative tasks.</li>
+      </ul>
+    </div>
+
+    <div class="timeline-item">
+      <div class="tl-date">Apr 2023 — Jun 2023</div>
+      <div class="tl-role">Banking Intern</div>
+      <div class="tl-company">Rastriya Banijya Bank Limited (RBBL) · Pokhara, Nepal</div>
+      <ul class="tl-bullets">
+        <li>Analyzed customer financial data and creditworthiness using Excel, increasing loan approval efficiency by 10%.</li>
+        <li>Used Excel pivot table analysis to identify financial trends and prepare ad hoc credit reports.</li>
+        <li>Handled account operations with full KYC/AML compliance; improved customer satisfaction by 20%.</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ── PROJECTS ── -->
+<section id="projects">
+  <p class="section-label">Portfolio</p>
+  <h2 class="section-title"><em>10+</em> Projects</h2>
+  <div class="projects-grid" id="projectsGrid">
+
+    <!-- Project 1 -->
+    <div class="project-card" onclick="toggleProject(this)">
+      <div class="project-header">
+        <div class="project-header-left">
+          <span class="project-num">01</span>
+          <div>
+            <div class="project-name">Serverless Event-Driven ETL Pipeline</div>
+            <div class="project-tools" style="margin-top:0.4rem;">
+              <span class="tag">AWS</span>
+              <span class="tag">Lambda</span>
+              <span class="tag">S3</span>
+              <span class="tag">Glue</span>
+              <span class="tag">Athena</span>
+            </div>
+          </div>
+        </div>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="project-body">
+        <div class="project-body-inner">
+          <p class="project-desc">
+            A fully automated serverless ETL pipeline on AWS that handles data ingestion, transformation, and SQL-based querying at scale — no manual intervention required.
+          </p>
+          <ul class="project-points">
+            <li>Designed and deployed pipeline using AWS S3, Lambda, Glue, and Athena, enabling scalable data ingestion and transformation.</li>
+            <li>Implemented real-time monitoring and alerting with AWS CloudWatch and SNS, reducing pipeline failure response time.</li>
+            <li>Ensured end-to-end data reliability and observability across the entire workflow.</li>
+          </ul>
+          <a href="https://github.com/ashuu-05" target="_blank" class="project-link">View on GitHub →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project 2 -->
+    <div class="project-card" onclick="toggleProject(this)">
+      <div class="project-header">
+        <div class="project-header-left">
+          <span class="project-num">02</span>
+          <div>
+            <div class="project-name">Hotel Revenue and Operation Analysis</div>
+            <div class="project-tools" style="margin-top:0.4rem;">
+              <span class="tag">Power BI</span>
+              <span class="tag purple">DAX</span>
+              <span class="tag purple">Power Query</span>
+            </div>
+          </div>
+        </div>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="project-body">
+        <div class="project-body-inner">
+          <p class="project-desc">
+            End-to-end business intelligence solution that transforms raw hotel operational data into an analytics-ready dataset with interactive dashboards for revenue strategy.
+          </p>
+          <ul class="project-points">
+            <li>Performed ETL and relational data modeling using Power Query and DAX, transforming raw data into structured datasets.</li>
+            <li>Built interactive Power BI dashboards featuring KPI tracking, revenue trend forecasting, and customer behavior segmentation.</li>
+            <li>Delivered actionable insights supporting strategic pricing and operational decisions.</li>
+          </ul>
+          <a href="https://github.com/ashuu-05" target="_blank" class="project-link">View on GitHub →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project 3 -->
+    <div class="project-card" onclick="toggleProject(this)">
+      <div class="project-header">
+        <div class="project-header-left">
+          <span class="project-num">03</span>
+          <div>
+            <div class="project-name">Stroke Prediction Analysis</div>
+            <div class="project-tools" style="margin-top:0.4rem;">
+              <span class="tag">Python</span>
+              <span class="tag">Scikit-learn</span>
+              <span class="tag purple">Random Forest</span>
+              <span class="tag purple">SMOTE</span>
+            </div>
+          </div>
+        </div>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="project-body">
+        <div class="project-body-inner">
+          <p class="project-desc">
+            End-to-end machine learning pipeline for stroke risk prediction — from raw data cleaning through model deployment, with a focus on business impact of medical false positives.
+          </p>
+          <ul class="project-points">
+            <li>Performed data cleaning, preprocessing, EDA, and feature engineering on a medical dataset.</li>
+            <li>Built and evaluated classification models (Logistic Regression, Random Forest), optimizing F1-score and ROC-AUC through hyperparameter tuning.</li>
+            <li>Applied SMOTE for class imbalance; analyzed business impact of false positives/negatives for healthcare decision-making.</li>
+          </ul>
+          <a href="https://github.com/ashuu-05" target="_blank" class="project-link">View on GitHub →</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── OTHER PROJECTS ── -->
+  <div class="other-projects">
+    <div class="other-projects-header">
+      <div>
+        <div class="other-title">Other Projects</div>
+        <div class="other-sub">More data engineering, analysis &amp; visualization work on GitHub</div>
+      </div>
+      <a href="https://github.com/ashuu-05" target="_blank" class="btn-outline" style="white-space:nowrap; flex-shrink:0;">View All on GitHub →</a>
+    </div>
+  </div>
+
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ── EDUCATION ── -->
+<section id="education">
+  <p class="section-label">Credentials</p>
+  <h2 class="section-title">Education &amp; <em>Certifications</em></h2>
+
+  <div class="edu-grid" style="margin-bottom: 2.5rem;">
+    <div class="edu-card">
+      <div class="edu-degree">M.S. Business Analytics (STEM)</div>
+      <div class="edu-school">Wichita State University</div>
+      <div class="edu-date">Aug 2024 – May 2026 · Wichita, KS</div>
+      <div class="edu-courses">Database Management · Data Analysis · Data Visualization · Cloud Computing</div>
+    </div>
+    <div class="edu-card">
+      <div class="edu-degree">Bachelor of Business Administration</div>
+      <div class="edu-school">Janapriya Multiple Campus</div>
+      <div class="edu-date">Nov 2018 – Nov 2023 · Nepal</div>
+      <div class="edu-courses">Business Management · Financial Analysis · Organizational Behavior</div>
+    </div>
+  </div>
+
+  <div class="cert-list">
+    <div class="cert-item">
+      <div class="cert-icon">🏅</div>
+      <div style="flex:1;">
+        <div class="cert-name">Google Professional Data Analytics Certificate</div>
+        <div class="cert-org">Coursera · Jul 2025</div>
+      </div>
+      <a href="https://coursera.org/verify/professional-cert/08Q1UANIXF79" target="_blank" class="cert-link">View ↗</a>
+    </div>
+    <div class="cert-item">
+      <div class="cert-icon">☁️</div>
+      <div style="flex:1;">
+        <div class="cert-name">AWS Data Engineering</div>
+        <div class="cert-org">AWS Academy · Nov 2025</div>
+      </div>
+      <a href="https://www.credly.com/go/nekFHTFa" target="_blank" class="cert-link">View ↗</a>
+    </div>
+    <div class="cert-item">
+      <div class="cert-icon">☁️</div>
+      <div style="flex:1;">
+        <div class="cert-name">AWS Cloud Foundations</div>
+        <div class="cert-org">AWS Academy · Sep 2025</div>
+      </div>
+      <a href="https://www.credly.com/go/YZyPepUw" target="_blank" class="cert-link">View ↗</a>
+    </div>
+    <div class="cert-item">
+      <div class="cert-icon">🗄️</div>
+      <div style="flex:1;">
+        <div class="cert-name">SQL Essential Training</div>
+        <div class="cert-org">LinkedIn Learning · Feb 2025</div>
+      </div>
+      <button onclick="openCertModal()" class="cert-link" style="cursor:pointer;border:none;font-family:inherit;">View ↗</button>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ── CONTACT ── -->
+<section id="contact">
+  <p class="section-label">Let's Connect</p>
+  <h2 class="section-title">Open to <em>New Opportunities</em></h2>
+  <p class="contact-desc">
+    Seeking entry-level roles in Data Analytics, Business Intelligence,<br>
+    or similar data-related positions.<br>
+    Available May 2026 · United States · Open to Relocate
+  </p>
+  <a href="/cdn-cgi/l/email-protection#790a11180b1418180a1114100d18414b4d391e14181015571a1614" class="btn-primary">✉ Send an Email</a>
+  <div class="contact-links">
+    <a href="/cdn-cgi/l/email-protection#4f3c272e3d222e2e3c2722263b2e777d7b0f28222e2623612c2022" class="contact-link">
+      <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+      <span class="__cf_email__" data-cfemail="52213a33203f3333213a3f3b26336a606612353f333b3e7c313d3f">[email&#160;protected]</span>
+    </a>
+    <a href="tel:+13167301604" class="contact-link">
+      <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.01L6.6 10.8z"/></svg>
+      +1 (316) 730-1604
+    </a>
+    <a href="https://www.linkedin.com/in/asmita-regmi57/" target="_blank" class="contact-link">
+      <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      LinkedIn
+    </a>
+    <a href="https://github.com/ashuu-05" target="_blank" class="contact-link">
+      <svg viewBox="0 0 24 24"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+      GitHub
+    </a>
+  </div>
+</section>
+
+
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // ── MOBILE MENU ──
+  function toggleMenu() {
+    document.getElementById('navLinks').classList.toggle('open');
+  }
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('nav')) {
+      document.getElementById('navLinks').classList.remove('open');
+    }
+  });
+
+  // ── PROJECT ACCORDION ──
+  function toggleProject(card) {
+    const body = card.querySelector('.project-body');
+    const isOpen = card.classList.contains('open');
+
+    // Close all
+    document.querySelectorAll('.project-card').forEach(c => {
+      c.classList.remove('open');
+      c.querySelector('.project-body').style.maxHeight = '0';
+    });
+
+    // Open clicked if it was closed
+    if (!isOpen) {
+      card.classList.add('open');
+      body.style.maxHeight = body.scrollHeight + 'px';
+    }
+  }
+
+  // ── SCROLL REVEAL ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.timeline-item, .project-card').forEach((el, i) => {
+    el.style.transitionDelay = (i * 0.08) + 's';
+    observer.observe(el);
+  });
+
+  // ── ACTIVE NAV ──
+  const sections = document.querySelectorAll('section[id]');
+  window.addEventListener('scroll', () => {
+   
