@@ -387,6 +387,15 @@
       padding-top: 1.2rem;
     }
 
+    .project-preview {
+      font-size: 0.88rem;
+      color: var(--muted);
+      padding: 0 1.8rem 1.2rem;
+      line-height: 1.6;
+    }
+    .project-preview p + p { margin-top: 0.6rem; }
+    .project-preview .tech-stack { color: var(--accent); font-size: 0.82rem; margin-top: 0.6rem; }
+
     .project-desc { font-size: 0.93rem; color: #ffffff; margin-bottom: 1rem; line-height: 1.8; }
     .project-points { list-style: none; }
     .project-points li {
@@ -764,11 +773,13 @@
         </div>
         <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
+      <div class="project-preview">
+        <p>Built a fully automated, event-driven ETL pipeline on AWS that ingests raw CSV data, transforms it into analytics-ready Parquet format, and loads it into a structured Data Lake, all without managing any infrastructure.</p>
+        <p>The pipeline is triggered automatically when files land in an S3 raw bucket, invoking AWS Lambda to kick off an AWS Glue ETL job that handles data cleaning, formatting, and Parquet conversion. A Glue Crawler then catalogs the transformed data into the AWS Glue Data Catalog, making it instantly queryable via Amazon Athena. End-to-end observability is maintained through CloudWatch logs and real-time SNS notifications for pipeline success and failure events.</p>
+        <p class="tech-stack">Tech Stack: AWS S3 · AWS Lambda · AWS Glue · Amazon Athena · Amazon SNS · Amazon EventBridge · Amazon CloudWatch · Python (Boto3, Pandas) · SQL · Parquet</p>
+      </div>
       <div class="project-body">
         <div class="project-body-inner">
-          <p class="project-desc">
-            A fully automated serverless ETL pipeline on AWS that handles data ingestion, transformation, and SQL-based querying at scale — no manual intervention required.
-          </p>
           <ul class="project-points">
             <li>Designed and deployed pipeline using AWS S3, Lambda, Glue, and Athena, enabling scalable data ingestion and transformation.</li>
             <li>Implemented real-time monitoring and alerting with AWS CloudWatch and SNS, reducing pipeline failure response time.</li>
@@ -795,11 +806,14 @@
         </div>
         <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
+      <div class="project-preview">
+        <p>An end-to-end business intelligence project analyzing booking patterns, cancellation behavior, and revenue performance across City and Resort hotels using a real-world dataset.</p>
+        <p>Data was cleaned and transformed in Python (Google Colab) to handle missing values, engineer date fields, and prepare an analytics-ready dataset. It was then loaded into Power BI where DAX measures were built for key KPIs — Total Bookings, Cancellation Rate, YOY Growth, and Total Revenue. The final interactive dashboard features Tornado Charts, Funnel Charts, KPI cards, and trend visuals, with fully interconnected slicers enabling dynamic drill-down across segments.</p>
+        <p>Key insights surfaced include high-cancellation customer segments, seasonal demand fluctuations, and guest retention gaps, enabling data-driven decisions for hotel performance monitoring.</p>
+        <p class="tech-stack">Tech Stack: Python (Pandas) · Power BI · DAX · ETL · Data Modeling · Google Colab</p>
+      </div>
       <div class="project-body">
         <div class="project-body-inner">
-          <p class="project-desc">
-            End-to-end business intelligence solution that transforms raw hotel operational data into an analytics-ready dataset with interactive dashboards for revenue strategy.
-          </p>
           <ul class="project-points">
             <li>Performed ETL and relational data modeling using Power Query and DAX, transforming raw data into structured datasets.</li>
             <li>Built interactive Power BI dashboards featuring KPI tracking, revenue trend forecasting, and customer behavior segmentation.</li>
@@ -827,11 +841,12 @@
         </div>
         <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
+      <div class="project-preview">
+        <p>Developed a stroke prediction ML pipeline on a 5,110-record imbalanced healthcare dataset (95:5 class ratio) using Python and Scikit-learn, handling missing value imputation, IQR-based outlier removal, label encoding, and SMOTE oversampling to address class imbalance.</p>
+        <p>Trained and compared 3 classification models (Logistic Regression, Random Forest, Gradient Boosting) with RandomizedSearchCV hyperparameter tuning, evaluating performance using F1 Score and ROC-AUC to select the most reliable model for imbalanced healthcare data.</p>
+      </div>
       <div class="project-body">
         <div class="project-body-inner">
-          <p class="project-desc">
-            End-to-end machine learning pipeline for stroke risk prediction — from raw data cleaning through model deployment, with a focus on business impact of medical false positives.
-          </p>
           <ul class="project-points">
             <li>Performed data cleaning, preprocessing, EDA, and feature engineering on a medical dataset.</li>
             <li>Built and evaluated classification models (Logistic Regression, Random Forest), optimizing F1-score and ROC-AUC through hyperparameter tuning.</li>
